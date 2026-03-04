@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CapstoneConnect — Where Students Meet Industry</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+          colors: {
+            brand: { DEFAULT: '#FF6B00', light: '#FFE5D0', accent: '#FF8C42' }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    html { scroll-behavior: smooth; }
+
+    .grain-bg {
+      position: relative;
+    }
+    .grain-bg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .hero-glow {
+      background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(255, 107, 0, 0.18) 0%, transparent 70%),
+                  radial-gradient(ellipse 40% 40% at 80% 80%, rgba(255, 140, 66, 0.10) 0%, transparent 60%);
+    }
+
+    .card-hover {
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+    }
+    .card-hover:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 60px -12px rgba(255, 107, 0, 0.18), 0 8px 20px -8px rgba(0,0,0,0.12);
+    }
+
+    .btn-primary {
+      background: #FF6B00;
+      color: white;
+      font-weight: 600;
+      border-radius: 12px;
+      padding: 14px 28px;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 4px 16px rgba(255, 107, 0, 0.35);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-primary:hover {
+      background: #e55f00;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(255, 107, 0, 0.45);
+    }
+    .btn-primary:active { transform: translateY(0); }
+
+    .btn-ghost {
+      color: #374151;
+      font-weight: 600;
+      border-radius: 12px;
+      padding: 14px 28px;
+      border: 1.5px solid #E5E7EB;
+      transition: border-color 0.2s, background 0.2s, transform 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-ghost:hover {
+      border-color: #FF6B00;
+      color: #FF6B00;
+      background: #FFF5EE;
+      transform: translateY(-1px);
+    }
+
+    .step-card {
+      border-radius: 20px;
+      background: white;
+      padding: 32px;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04);
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+    .float-anim { animation: float 4s ease-in-out infinite; }
+    .float-anim-delay { animation: float 4s ease-in-out infinite; animation-delay: 0.8s; }
+    .float-anim-delay2 { animation: float 4s ease-in-out infinite; animation-delay: 1.6s; }
+
+    .nav-link {
+      color: #6B7280;
+      font-weight: 500;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    .nav-link:hover { color: #FF6B00; }
+  </style>
+</head>
+<body class="bg-white text-gray-900 antialiased overflow-x-hidden">
+
+  <!-- NAV -->
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-lg bg-brand flex items-center justify-center">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2L14 5.5V10.5L8 14L2 10.5V5.5L8 2Z" fill="white"/></svg>
+        </div>
+        <span class="font-bold text-gray-900 tracking-tight">CapstoneConnect</span>
+      </a>
+      <div class="hidden md:flex items-center gap-8">
+        <a href="#how-it-works" class="nav-link">How It Works</a>
+        <a href="#for-students" class="nav-link">For Students</a>
+        <a href="#for-industry" class="nav-link">For Industry</a>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="login.html" class="btn-ghost" style="padding: 10px 20px; font-size: 0.875rem;">Log In</a>
+        <a href="login.html" class="btn-primary" style="padding: 10px 20px; font-size: 0.875rem;">Get Started</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="grain-bg hero-glow min-h-screen flex flex-col items-center justify-center pt-24 pb-20 px-6 text-center relative overflow-hidden">
+    <!-- Floating orbs -->
+    <div class="absolute top-32 left-10 w-64 h-64 rounded-full opacity-10 blur-3xl" style="background: #FF6B00; animation: float 6s ease-in-out infinite;"></div>
+    <div class="absolute bottom-20 right-10 w-96 h-96 rounded-full opacity-8 blur-3xl" style="background: #FF8C42; animation: float 8s ease-in-out infinite; animation-delay: 1s;"></div>
+
+    <div class="relative z-10 max-w-4xl">
+      <div class="inline-flex items-center gap-2 bg-orange-50 border border-orange-200 text-orange-700 px-4 py-2 rounded-full text-sm font-medium mb-8">
+        <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
+        Now accepting Spring 2025 capstone applications
+      </div>
+
+      <h1 class="text-5xl md:text-7xl font-black leading-[1.05] tracking-tight mb-6" style="letter-spacing: -0.04em;">
+        Real Projects.<br />
+        <span style="color: #FF6B00;">Real Impact.</span>
+      </h1>
+
+      <p class="text-lg md:text-xl text-gray-500 max-w-2xl mx-auto mb-10 leading-relaxed" style="line-height: 1.7;">
+        CapstoneConnect bridges top university students with industry partners on meaningful capstone projects — turning coursework into career-defining work.
+      </p>
+
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a href="login.html" class="btn-primary text-base">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 10v6M2 10l10-5 10 5-10 5-10-5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+          Browse Projects as Student
+        </a>
+        <a href="login.html" class="btn-ghost text-base">
+          Post a Project as Company
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <!-- Hero stats -->
+      <div class="flex items-center justify-center gap-12 mt-16 pt-8 border-t border-gray-100">
+        <div class="text-center">
+          <div class="text-3xl font-black text-gray-900" style="letter-spacing: -0.03em;">340+</div>
+          <div class="text-sm text-gray-500 mt-1">Student Teams</div>
+        </div>
+        <div class="w-px h-10 bg-gray-200"></div>
+        <div class="text-center">
+          <div class="text-3xl font-black text-gray-900" style="letter-spacing: -0.03em;">82</div>
+          <div class="text-sm text-gray-500 mt-1">Industry Partners</div>
+        </div>
+        <div class="w-px h-10 bg-gray-200"></div>
+        <div class="text-center">
+          <div class="text-3xl font-black text-gray-900" style="letter-spacing: -0.03em;">94%</div>
+          <div class="text-sm text-gray-500 mt-1">Project Completion</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how-it-works" class="py-24 px-6 bg-gray-50">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-16">
+        <p class="text-brand font-semibold text-sm uppercase tracking-widest mb-3">The Process</p>
+        <h2 class="text-4xl md:text-5xl font-black tracking-tight" style="letter-spacing: -0.03em;">How It Works</h2>
+        <p class="text-gray-500 mt-4 text-lg max-w-xl mx-auto">From application to completion in four clear steps.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Step 1 -->
+        <div class="step-card card-hover">
+          <div class="w-12 h-12 rounded-2xl flex items-center justify-center mb-5 text-xl font-black" style="background: #FFE5D0; color: #FF6B00;">01</div>
+          <h3 class="font-bold text-lg mb-2">Companies Post Projects</h3>
+          <p class="text-gray-500 text-sm leading-relaxed">Industry partners define real challenges, required skills, scope, and timeline.</p>
+        </div>
+        <!-- Step 2 -->
+        <div class="step-card card-hover">
+          <div class="w-12 h-12 rounded-2xl flex items-center justify-center mb-5 text-xl font-black" style="background: #FFE5D0; color: #FF6B00;">02</div>
+          <h3 class="font-bold text-lg mb-2">Students Form Teams</h3>
+          <p class="text-gray-500 text-sm leading-relaxed">Students build cross-disciplinary teams and complete their profiles with skills and resume.</p>
+        </div>
+        <!-- Step 3 -->
+        <div class="step-card card-hover">
+          <div class="w-12 h-12 rounded-2xl flex items-center justify-center mb-5 text-xl font-black" style="background: #FFE5D0; color: #FF6B00;">03</div>
+          <h3 class="font-bold text-lg mb-2">AI-Powered Matching</h3>
+          <p class="text-gray-500 text-sm leading-relaxed">Our matching algorithm scores teams against project requirements and surfaces the best fits.</p>
+        </div>
+        <!-- Step 4 -->
+        <div class="step-card card-hover">
+          <div class="w-12 h-12 rounded-2xl flex items-center justify-center mb-5 text-xl font-black" style="background: #FFE5D0; color: #FF6B00;">04</div>
+          <h3 class="font-bold text-lg mb-2">Collaborate & Ship</h3>
+          <p class="text-gray-500 text-sm leading-relaxed">Accepted teams connect with companies and deliver real-world impact over the semester.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOR STUDENTS -->
+  <section id="for-students" class="py-24 px-6 bg-white">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      <div>
+        <p class="text-brand font-semibold text-sm uppercase tracking-widest mb-3">For Students</p>
+        <h2 class="text-4xl md:text-5xl font-black tracking-tight mb-6" style="letter-spacing: -0.03em;">Turn your degree into a portfolio.</h2>
+        <p class="text-gray-500 text-lg leading-relaxed mb-8" style="line-height: 1.7;">
+          Apply to real projects from aerospace, healthcare, and sustainability companies. Work with a team. Build something that matters.
+        </p>
+        <ul class="space-y-4">
+          <li class="flex items-start gap-3">
+            <div class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style="background: #FFE5D0;">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#FF6B00" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <span class="text-gray-700">Filter projects by topic, location, and skills</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <div class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style="background: #FFE5D0;">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#FF6B00" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <span class="text-gray-700">Submit a custom proposal per project</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <div class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style="background: #FFE5D0;">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#FF6B00" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <span class="text-gray-700">Get matched by AI based on your team's skills</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <div class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style="background: #FFE5D0;">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#FF6B00" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <span class="text-gray-700">Add the experience to your resume</span>
+          </li>
+        </ul>
+        <a href="login.html" class="btn-primary mt-10 inline-flex">
+          Join as a Student
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <!-- Visual card mockup -->
+      <div class="relative">
+        <div class="float-anim bg-white rounded-2xl p-6 shadow-2xl border border-gray-100 max-w-sm mx-auto">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-lg bg-gray-900 flex items-center justify-center text-white text-xs font-bold">AV</div>
+              <div>
+                <div class="text-xs font-semibold text-gray-900">AeroVance Systems</div>
+                <div class="text-xs text-gray-400">El Segundo, CA</div>
+              </div>
+            </div>
+            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>Open
+            </span>
+          </div>
+          <h4 class="font-bold text-gray-900 text-sm mb-2">Autonomous Drone Collision Avoidance via Computer Vision</h4>
+          <div class="flex flex-wrap gap-1.5 mb-4">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">Python</span>
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">CV</span>
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">TensorFlow</span>
+          </div>
+          <div class="flex gap-2">
+            <button class="flex-1 py-2 rounded-xl text-sm font-semibold text-white" style="background: #FF6B00;">Apply Now</button>
+            <button class="w-10 h-9 flex items-center justify-center rounded-xl border border-gray-200 text-gray-400">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="float-anim-delay absolute -bottom-4 -right-4 bg-white rounded-2xl p-4 shadow-xl border border-gray-100 max-w-xs">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm" style="background: #FF6B00;">87</div>
+            <div>
+              <div class="text-xs font-bold text-gray-900">AI Match Score: 87%</div>
+              <div class="text-xs text-gray-400">Top Recommended</div>
+            </div>
+            <span class="text-lg">⭐</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOR INDUSTRY -->
+  <section id="for-industry" class="py-24 px-6" style="background: #111;">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      <!-- Visual -->
+      <div class="order-2 lg:order-1 grid grid-cols-2 gap-4">
+        <div class="float-anim bg-white/5 backdrop-blur rounded-2xl p-5 border border-white/10">
+          <div class="text-3xl font-black text-white mb-1">6</div>
+          <div class="text-gray-400 text-sm">Active Projects</div>
+        </div>
+        <div class="float-anim-delay bg-white/5 backdrop-blur rounded-2xl p-5 border border-white/10">
+          <div class="text-3xl font-black" style="color: #FF6B00;">24</div>
+          <div class="text-gray-400 text-sm">Applicants</div>
+        </div>
+        <div class="float-anim-delay2 col-span-2 bg-white/5 backdrop-blur rounded-2xl p-5 border border-white/10">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-8 h-8 rounded-full bg-orange-500/20 flex items-center justify-center">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF6B00" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+            </div>
+            <span class="text-white text-sm font-semibold">Predictive Maintenance Pipeline</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-gray-400 text-xs">6 Teams Applied</span>
+            <span class="px-2 py-1 rounded-full text-xs font-medium text-amber-400" style="background: rgba(251,191,36,0.15);">In Progress</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="order-1 lg:order-2">
+        <p class="font-semibold text-sm uppercase tracking-widest mb-3" style="color: #FF6B00;">For Industry</p>
+        <h2 class="text-4xl md:text-5xl font-black tracking-tight mb-6 text-white" style="letter-spacing: -0.03em;">Access the next generation of talent.</h2>
+        <p class="text-gray-400 text-lg leading-relaxed mb-8" style="line-height: 1.7;">
+          Post a real challenge. Receive proposals from motivated student teams. Use AI-powered matching to find the best fit — fast.
+        </p>
+        <ul class="space-y-4">
+          <li class="flex items-start gap-3">
+            <div class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style="background: rgba(255,107,0,0.2);">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#FF6B00" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <span class="text-gray-300">Post projects in minutes with structured templates</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <div class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style="background: rgba(255,107,0,0.2);">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#FF6B00" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <span class="text-gray-300">AI match scores ranked by skill alignment</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <div class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style="background: rgba(255,107,0,0.2);">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#FF6B00" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <span class="text-gray-300">Accept multiple teams across your projects</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <div class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style="background: rgba(255,107,0,0.2);">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#FF6B00" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <span class="text-gray-300">Real deliverables, no overhead</span>
+          </li>
+        </ul>
+        <a href="login.html" class="btn-primary mt-10 inline-flex">
+          Post a Project
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="py-12 px-6 bg-gray-50 border-t border-gray-100">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-lg bg-brand flex items-center justify-center">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 2L14 5.5V10.5L8 14L2 10.5V5.5L8 2Z" fill="white"/></svg>
+        </div>
+        <span class="font-bold text-gray-900">CapstoneConnect</span>
+      </div>
+      <p class="text-sm text-gray-400">© 2025 CapstoneConnect. MVP Prototype.</p>
+      <div class="flex gap-6">
+        <a href="#" class="text-sm text-gray-400 hover:text-gray-600 transition-colors">Privacy</a>
+        <a href="#" class="text-sm text-gray-400 hover:text-gray-600 transition-colors">Terms</a>
+        <a href="#" class="text-sm text-gray-400 hover:text-gray-600 transition-colors">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

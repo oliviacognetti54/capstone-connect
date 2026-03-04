@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Browse Projects — CapstoneConnect</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="mockStudents.js"></script>
+  <script src="mockCompanies.js"></script>
+  <script src="mockProjects.js"></script>
+  <script src="mockApplications.js"></script>
+  <script src="main.js"></script>
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    .sidebar-link { display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px; color:#6B7280; font-size:0.875rem; font-weight:500; transition:background 0.15s, color 0.15s; cursor:pointer; }
+    .sidebar-link:hover, .sidebar-link.active { background:#FFF5EE; color:#FF6B00; }
+    .sidebar-link.active { font-weight:600; }
+
+    .filter-btn { padding:8px 16px; border-radius:100px; border:1.5px solid #E5E7EB; font-size:0.8rem; font-weight:600; color:#6B7280; cursor:pointer; transition:all 0.15s; white-space:nowrap; background:white; }
+    .filter-btn:hover, .filter-btn.active { border-color:#FF6B00; color:#FF6B00; background:#FFF5EE; }
+
+    .project-card {
+      background: white;
+      border-radius: 20px;
+      padding: 24px;
+      border: 1.5px solid #F3F4F6;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+      min-width: 320px;
+      max-width: 360px;
+      flex-shrink: 0;
+      cursor: pointer;
+      transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.22s ease, border-color 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+    .project-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 48px rgba(255,107,0,0.13), 0 4px 12px rgba(0,0,0,0.07);
+      border-color: rgba(255,107,0,0.3);
+    }
+
+    .scroll-row { display:flex; gap:16px; overflow-x:auto; padding-bottom:12px; scrollbar-width:none; }
+    .scroll-row::-webkit-scrollbar { display:none; }
+
+    .save-btn { width:36px; height:36px; border-radius:10px; border:1.5px solid #E5E7EB; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:border-color 0.15s, background 0.15s; cursor:pointer; background:white; }
+    .save-btn:hover { border-color:#FF6B00; background:#FFF5EE; }
+    .save-btn.saved { background:#FFE5D0; border-color:#FF6B00; }
+    .save-btn.saved svg { stroke:#FF6B00; fill:#FF8C42; }
+
+    .apply-btn { flex:1; padding:10px; border-radius:12px; font-size:0.85rem; font-weight:700; color:white; background:#FF6B00; border:none; cursor:pointer; transition:background 0.2s, transform 0.15s; }
+    .apply-btn:hover { background:#e55f00; transform:translateY(-1px); }
+    .apply-btn:disabled { background:#D1D5DB; color:#9CA3AF; cursor:default; transform:none; }
+
+    .search-input { padding:10px 16px 10px 40px; border:1.5px solid #E5E7EB; border-radius:12px; font-size:0.875rem; color:#111827; outline:none; width:280px; transition:border-color 0.2s, box-shadow 0.2s; }
+    .search-input:focus { border-color:#FF6B00; box-shadow:0 0 0 3px rgba(255,107,0,0.1); }
+
+    /* Modal */
+    .modal-overlay { position:fixed; inset:0; z-index:50; display:flex; align-items:center; justify-content:center; padding:16px; }
+    .modal-backdrop { position:absolute; inset:0; background:rgba(0,0,0,0.4); backdrop-filter:blur(4px); }
+    .modal-box { position:relative; background:white; border-radius:24px; padding:32px; width:100%; max-width:520px; max-height:90vh; overflow-y:auto; box-shadow:0 24px 80px rgba(0,0,0,0.2); }
+
+    .textarea-field { width:100%; padding:12px 14px; border:1.5px solid #E5E7EB; border-radius:12px; font-size:0.875rem; color:#111827; outline:none; resize:vertical; min-height:120px; transition:border-color 0.2s, box-shadow 0.2s; font-family:inherit; }
+    .textarea-field:focus { border-color:#FF6B00; box-shadow:0 0 0 3px rgba(255,107,0,0.12); }
+
+    .section-label { font-size:0.7rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#9CA3AF; margin-bottom:12px; }
+
+    .applied-badge { display:inline-flex; align-items:center; gap:5px; padding:6px 12px; border-radius:8px; font-size:0.75rem; font-weight:600; background:#ECFDF5; color:#059669; }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+  <!-- TOP NAV -->
+  <nav class="fixed top-0 left-0 right-0 z-40 bg-white border-b border-gray-100 h-16 flex items-center px-6">
+    <div class="max-w-7xl mx-auto w-full flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background:#FF6B00;">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 2L14 5.5V10.5L8 14L2 10.5V5.5L8 2Z" fill="white"/></svg>
+        </div>
+        <span class="font-bold text-gray-900">CapstoneConnect</span>
+      </a>
+      <div class="flex items-center gap-4">
+        <span class="text-sm text-gray-500" id="nav-name">Student</span>
+        <button onclick="localStorage.clear(); window.location.href='login.html'" class="text-sm text-gray-400 hover:text-red-500 transition-colors">Log out</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="pt-16 flex min-h-screen">
+    <!-- SIDEBAR -->
+    <aside class="hidden md:flex flex-col w-56 fixed left-0 top-16 bottom-0 bg-white border-r border-gray-100 p-4">
+      <div class="space-y-1 mt-2">
+        <div class="sidebar-link" onclick="window.location.href='student-profile.html'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          My Profile
+        </div>
+        <div class="sidebar-link active">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Browse Projects
+        </div>
+        <div class="sidebar-link" onclick="showSavedOnly()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+          Saved Projects
+        </div>
+      </div>
+      <div class="mt-auto pb-4">
+        <div class="sidebar-link text-red-400" onclick="localStorage.clear(); window.location.href='login.html'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Log Out
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="md:ml-56 flex-1 px-6 py-8">
+
+      <!-- Header -->
+      <div class="mb-6">
+        <h1 class="text-2xl font-black text-gray-900 tracking-tight" style="letter-spacing:-0.03em;" id="page-title">Browse Projects</h1>
+        <p class="text-gray-500 text-sm mt-1" id="page-subtitle">Discover real-world capstone opportunities from industry partners.</p>
+      </div>
+
+      <!-- Search + Filters -->
+      <div class="flex flex-wrap items-center gap-3 mb-8">
+        <div class="relative">
+          <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <input type="text" id="search-input" class="search-input" placeholder="Search projects..." oninput="renderAll()" />
+        </div>
+        <div class="flex flex-wrap gap-2" id="filter-chips">
+          <button class="filter-btn active" data-filter="all" onclick="setFilter('all', this)">All Projects</button>
+          <button class="filter-btn" data-filter="open" onclick="setFilter('open', this)">Open</button>
+          <button class="filter-btn" data-filter="in-progress" onclick="setFilter('in-progress', this)">In Progress</button>
+          <button class="filter-btn" data-filter="completed" onclick="setFilter('completed', this)">Completed</button>
+        </div>
+      </div>
+
+      <!-- Filter row: Location / Topic / Company -->
+      <div class="flex flex-wrap gap-2 mb-8">
+        <select id="filter-location" class="filter-btn" style="appearance:none; padding-right:28px; background-image:url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width%3D%2212%22 height%3D%2212%22 viewBox%3D%220 0 24 24%22 fill%3D%22none%22 stroke%3D%22%236B7280%22 stroke-width%3D%222%22%3E%3Cpolyline points%3D%226 9 12 15 18 9%22/%3E%3C/svg%3E'); background-repeat:no-repeat; background-position:right 8px center;" onchange="renderAll()">
+          <option value="">All Locations</option>
+          <option>El Segundo, CA (Hybrid)</option>
+          <option>San Diego, CA (On-site)</option>
+          <option>San Francisco, CA (Hybrid)</option>
+          <option>Remote</option>
+        </select>
+        <select id="filter-topic" class="filter-btn" style="appearance:none; padding-right:28px; background-image:url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width%3D%2212%22 height%3D%2212%22 viewBox%3D%220 0 24 24%22 fill%3D%22none%22 stroke%3D%22%236B7280%22 stroke-width%3D%222%22%3E%3Cpolyline points%3D%226 9 12 15 18 9%22/%3E%3C/svg%3E'); background-repeat:no-repeat; background-position:right 8px center;" onchange="renderAll()">
+          <option value="">All Topics</option>
+          <option>Artificial Intelligence</option>
+          <option>Machine Learning</option>
+          <option>Healthcare AI</option>
+          <option>UX/Product</option>
+          <option>Sustainability</option>
+        </select>
+        <select id="filter-company" class="filter-btn" style="appearance:none; padding-right:28px; background-image:url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width%3D%2212%22 height%3D%2212%22 viewBox%3D%220 0 24 24%22 fill%3D%22none%22 stroke%3D%22%236B7280%22 stroke-width%3D%222%22%3E%3Cpolyline points%3D%226 9 12 15 18 9%22/%3E%3C/svg%3E'); background-repeat:no-repeat; background-position:right 8px center;" onchange="renderAll()">
+          <option value="">All Companies</option>
+          <option>AeroVance Systems</option>
+          <option>Lumina Health</option>
+          <option>Verdant Advisory</option>
+        </select>
+      </div>
+
+      <!-- Sections -->
+      <div id="open-section" class="mb-10">
+        <div class="section-label mb-4">Open for Applications</div>
+        <div class="scroll-row" id="open-cards"></div>
+      </div>
+      <div id="inprogress-section" class="mb-10">
+        <div class="section-label mb-4">In Progress</div>
+        <div class="scroll-row" id="inprogress-cards"></div>
+      </div>
+      <div id="completed-section" class="mb-10">
+        <div class="section-label mb-4">Completed</div>
+        <div class="scroll-row" id="completed-cards"></div>
+      </div>
+
+      <div id="empty-state" class="hidden text-center py-20 text-gray-400">
+        <svg class="mx-auto mb-4" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <p class="font-semibold text-gray-600">No projects match your filters.</p>
+        <p class="text-sm mt-1">Try adjusting your search or filters.</p>
+        <button onclick="resetFilters()" class="mt-4 px-4 py-2 rounded-10 text-sm font-semibold text-orange-600 border border-orange-200 hover:bg-orange-50 transition-colors" style="border-radius:10px;">Reset Filters</button>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Apply Modal -->
+  <div id="apply-modal" class="modal-overlay hidden">
+    <div class="modal-backdrop" onclick="closeApplyModal()"></div>
+    <div class="modal-box">
+      <button onclick="closeApplyModal()" class="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors text-gray-500">×</button>
+
+      <div class="flex items-center gap-3 mb-6">
+        <img id="modal-company-logo" src="" class="w-10 h-10 rounded-xl" />
+        <div>
+          <div class="text-xs text-gray-400 font-medium" id="modal-company-name"></div>
+          <h2 class="text-lg font-black text-gray-900 leading-tight" style="letter-spacing:-0.02em;" id="modal-project-title"></h2>
+        </div>
+      </div>
+
+      <div class="mb-5 p-4 bg-gray-50 rounded-xl border border-gray-100">
+        <div class="text-xs font-semibold text-gray-500 mb-1">Required Skills</div>
+        <div class="flex flex-wrap gap-1.5" id="modal-required-skills"></div>
+      </div>
+
+      <!-- Match score -->
+      <div id="modal-match-section" class="mb-5 p-4 rounded-xl border" style="background:#FFF9F5; border-color:rgba(255,107,0,0.2);">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-black text-base" style="background:#FF6B00;" id="modal-match-score">—</div>
+          <div>
+            <div class="text-sm font-bold text-gray-900">Your Team's AI Match Score</div>
+            <div class="text-xs text-gray-500" id="modal-match-note">Based on your team's combined skills</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-6">
+        <label class="text-sm font-bold text-gray-900 block mb-2">Your Proposal *</label>
+        <p class="text-xs text-gray-400 mb-3">Explain why your team is a great fit for this project. Be specific about your relevant skills and approach.</p>
+        <textarea id="proposal-input" class="textarea-field" placeholder="Our team brings expertise in... We propose to... Our timeline would be..."></textarea>
+      </div>
+
+      <div class="flex gap-3">
+        <button onclick="closeApplyModal()" class="flex-1 py-3 rounded-xl border border-gray-200 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors">Cancel</button>
+        <button onclick="submitApplication()" class="flex-1 py-3 rounded-xl text-sm font-semibold text-white transition-colors" style="background:#FF6B00;">Submit Application →</button>
+      </div>
+
+      <p class="text-center text-xs text-gray-400 mt-4">Applying as: <strong id="modal-team-name">Signal & Spark</strong></p>
+    </div>
+  </div>
+
+  <script>
+    requireRole('student');
+
+    let profile = getStudentProfile();
+    let projects = getProjects();
+    let applications = getApplications();
+    let activeFilter = 'all';
+    let showingSaved = false;
+    let currentProjectId = null;
+
+    document.getElementById('nav-name').textContent = profile.name || 'Student';
+
+    function setFilter(val, el) {
+      activeFilter = val;
+      document.querySelectorAll('.filter-btn[data-filter]').forEach(b => b.classList.remove('active'));
+      el?.classList.add('active');
+      showingSaved = false;
+      document.getElementById('page-title').textContent = 'Browse Projects';
+      document.getElementById('page-subtitle').textContent = 'Discover real-world capstone opportunities from industry partners.';
+      renderAll();
+    }
+
+    function showSavedOnly() {
+      showingSaved = true;
+      activeFilter = 'all';
+      document.querySelectorAll('.filter-btn[data-filter]').forEach(b => b.classList.remove('active'));
+      document.getElementById('page-title').textContent = 'Saved Projects';
+      document.getElementById('page-subtitle').textContent = 'Projects you bookmarked for later.';
+      renderAll();
+    }
+
+    function resetFilters() {
+      document.getElementById('search-input').value = '';
+      document.getElementById('filter-location').value = '';
+      document.getElementById('filter-topic').value = '';
+      document.getElementById('filter-company').value = '';
+      setFilter('all', document.querySelector('.filter-btn[data-filter="all"]'));
+    }
+
+    function getFilteredProjects() {
+      const search = document.getElementById('search-input').value.toLowerCase();
+      const loc = document.getElementById('filter-location').value;
+      const topic = document.getElementById('filter-topic').value;
+      const company = document.getElementById('filter-company').value;
+
+      return projects.filter(p => {
+        if (showingSaved && !isProjectSaved(p.id)) return false;
+        if (activeFilter !== 'all' && p.status !== activeFilter) return false;
+        if (search && !p.title.toLowerCase().includes(search) && !p.companyName.toLowerCase().includes(search) && !p.topic.toLowerCase().includes(search)) return false;
+        if (loc && p.location !== loc) return false;
+        if (topic && p.topic !== topic) return false;
+        if (company && p.companyName !== company) return false;
+        return true;
+      });
+    }
+
+    function hasApplied(projectId) {
+      return applications.some(a => a.projectId === projectId && a.teamId === (profile.teamId || 'none'));
+    }
+
+    function renderProjectCard(p) {
+      const saved = isProjectSaved(p.id);
+      const applied = hasApplied(p.id);
+      const team = mockTeams.find(t => t.id === profile.teamId);
+      const teamSkills = profile.skills || [];
+      const matchScore = computeMatchScore(teamSkills, p.requiredSkills);
+
+      const statusColors = {
+        'open':        'bg-emerald-50 text-emerald-700',
+        'in-progress': 'bg-amber-50 text-amber-700',
+        'completed':   'bg-blue-50 text-blue-700',
+        'draft':       'bg-gray-100 text-gray-600'
+      };
+      const statusDots = { 'open':'bg-emerald-400', 'in-progress':'bg-amber-400', 'completed':'bg-blue-400', 'draft':'bg-gray-400' };
+      const statusLabel = { 'open':'Open', 'in-progress':'In Progress', 'completed':'Completed', 'draft':'Draft' };
+
+      return `
+        <div class="project-card" onclick="openApplyModal('${p.id}')">
+          <div class="flex items-start justify-between mb-4">
+            <div class="flex items-center gap-2">
+              <img src="${p.companyLogo}" class="w-9 h-9 rounded-xl" />
+              <div>
+                <div class="text-xs font-semibold text-gray-900">${p.companyName}</div>
+                <div class="text-xs text-gray-400">${p.location}</div>
+              </div>
+            </div>
+            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold ${statusColors[p.status]}">
+              <span class="w-1.5 h-1.5 rounded-full ${statusDots[p.status]}"></span>
+              ${statusLabel[p.status]}
+            </span>
+          </div>
+
+          <h3 class="font-bold text-gray-900 text-sm leading-snug mb-3" style="min-height:40px;">${p.title}</h3>
+
+          <div class="flex flex-wrap gap-1.5 mb-4">
+            ${p.requiredSkills.slice(0,3).map(s => `<span class="px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">${s}</span>`).join('')}
+            ${p.requiredSkills.length > 3 ? `<span class="px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">+${p.requiredSkills.length-3}</span>` : ''}
+          </div>
+
+          <div class="flex items-center justify-between mb-4 text-xs text-gray-400">
+            <span>${p.applicantCount} applicants</span>
+            ${matchScore > 0 ? `<span class="font-semibold" style="color:#FF6B00;">⚡ ${matchScore}% match</span>` : ''}
+          </div>
+
+          <div class="flex gap-2 mt-auto" onclick="event.stopPropagation()">
+            ${applied
+              ? `<div class="applied-badge flex-1 justify-center">✓ Applied</div>`
+              : `<button class="apply-btn" onclick="openApplyModal('${p.id}')" ${p.status !== 'open' ? 'disabled' : ''}>${p.status !== 'open' ? 'Closed' : 'Apply Now'}</button>`
+            }
+            <button class="save-btn ${saved ? 'saved' : ''}" onclick="toggleSave('${p.id}', this)" title="${saved ? 'Unsave' : 'Save'}">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="${saved ? '#FF8C42' : 'none'}" stroke="${saved ? '#FF6B00' : '#9CA3AF'}" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderAll() {
+      const filtered = getFilteredProjects();
+      const open = filtered.filter(p => p.status === 'open');
+      const inprog = filtered.filter(p => p.status === 'in-progress');
+      const done = filtered.filter(p => p.status === 'completed');
+
+      const showAll = activeFilter === 'all';
+      document.getElementById('open-section').style.display = (!showAll && activeFilter !== 'open') ? 'none' : '';
+      document.getElementById('inprogress-section').style.display = (!showAll && activeFilter !== 'in-progress') ? 'none' : '';
+      document.getElementById('completed-section').style.display = (!showAll && activeFilter !== 'completed') ? 'none' : '';
+
+      document.getElementById('open-cards').innerHTML = open.map(renderProjectCard).join('') || `<p class="text-sm text-gray-400 py-4">No open projects match your filters.</p>`;
+      document.getElementById('inprogress-cards').innerHTML = inprog.map(renderProjectCard).join('') || `<p class="text-sm text-gray-400 py-4">No in-progress projects.</p>`;
+      document.getElementById('completed-cards').innerHTML = done.map(renderProjectCard).join('') || `<p class="text-sm text-gray-400 py-4">No completed projects.</p>`;
+
+      const isEmpty = filtered.length === 0;
+      document.getElementById('empty-state').classList.toggle('hidden', !isEmpty);
+      if (isEmpty) {
+        document.getElementById('open-section').style.display = 'none';
+        document.getElementById('inprogress-section').style.display = 'none';
+        document.getElementById('completed-section').style.display = 'none';
+      }
+    }
+
+    function toggleSave(id, btn) {
+      if (isProjectSaved(id)) {
+        unsaveProject(id);
+        btn.classList.remove('saved');
+        btn.querySelector('svg').setAttribute('fill', 'none');
+        btn.querySelector('svg').setAttribute('stroke', '#9CA3AF');
+        showToast('Removed from saved.');
+      } else {
+        saveProject(id);
+        btn.classList.add('saved');
+        btn.querySelector('svg').setAttribute('fill', '#FF8C42');
+        btn.querySelector('svg').setAttribute('stroke', '#FF6B00');
+        showToast('Project saved!');
+      }
+    }
+
+    // Apply modal
+    function openApplyModal(projectId) {
+      const p = projects.find(x => x.id === projectId);
+      if (!p || p.status !== 'open') return;
+      currentProjectId = projectId;
+
+      document.getElementById('modal-company-logo').src = p.companyLogo;
+      document.getElementById('modal-company-name').textContent = p.companyName;
+      document.getElementById('modal-project-title').textContent = p.title;
+      document.getElementById('modal-required-skills').innerHTML = p.requiredSkills.map(s =>
+        `<span class="px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">${s}</span>`
+      ).join('');
+
+      const teamSkills = profile.skills || [];
+      const score = computeMatchScore(teamSkills, p.requiredSkills);
+      document.getElementById('modal-match-score').textContent = score + '%';
+      document.getElementById('modal-match-note').textContent = score >= 70 ? '🌟 Strong match for this project!' : score >= 40 ? 'Moderate match — highlight your transferable skills.' : 'Low match — consider if this project aligns with your skills.';
+
+      const team = mockTeams.find(t => t.id === profile.teamId);
+      document.getElementById('modal-team-name').textContent = team ? team.name : profile.name + ' (solo)';
+
+      document.getElementById('proposal-input').value = '';
+      document.getElementById('apply-modal').classList.remove('hidden');
+    }
+
+    function closeApplyModal() {
+      document.getElementById('apply-modal').classList.add('hidden');
+      currentProjectId = null;
+    }
+
+    function submitApplication() {
+      const proposal = document.getElementById('proposal-input').value.trim();
+      if (!proposal) { showToast('Please write a short proposal.', 'error'); return; }
+      if (proposal.length < 30) { showToast('Proposal is too short. Write at least a sentence.', 'error'); return; }
+
+      const p = projects.find(x => x.id === currentProjectId);
+      const team = mockTeams.find(t => t.id === profile.teamId);
+
+      const newApp = {
+        id: 'app_' + Date.now(),
+        projectId: currentProjectId,
+        teamId: profile.teamId || 's_me',
+        teamName: team ? team.name : profile.name,
+        members: [{ name: profile.name, university: profile.university, major: profile.major, skills: profile.skills }],
+        proposal,
+        submittedAt: new Date().toISOString().split('T')[0],
+        status: 'pending'
+      };
+
+      applications.push(newApp);
+      saveApplications(applications);
+      if (p) p.applicantCount++;
+      saveProjects(projects);
+
+      closeApplyModal();
+      renderAll();
+      showToast('Application submitted! 🎉');
+    }
+
+    renderAll();
+  </script>
+</body>
+</html>

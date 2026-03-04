@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Profile — CapstoneConnect</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="mockStudents.js"></script>
+  <script src="mockApplications.js"></script>
+  <script src="main.js"></script>
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    .sidebar-link { display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px; color:#6B7280; font-size:0.875rem; font-weight:500; transition:background 0.15s, color 0.15s; cursor:pointer; }
+    .sidebar-link:hover, .sidebar-link.active { background:#FFF5EE; color:#FF6B00; }
+    .sidebar-link.active { font-weight:600; }
+    .input-field { width:100%; padding:10px 14px; border:1.5px solid #E5E7EB; border-radius:10px; font-size:0.875rem; color:#111827; outline:none; transition:border-color 0.2s, box-shadow 0.2s; background:white; }
+    .input-field:focus { border-color:#FF6B00; box-shadow:0 0 0 3px rgba(255,107,0,0.12); }
+    .input-label { font-size:0.8rem; font-weight:600; color:#374151; margin-bottom:6px; display:block; }
+    .section-card { background:white; border-radius:20px; padding:28px; border:1px solid #F3F4F6; box-shadow:0 2px 12px rgba(0,0,0,0.05); }
+    .btn-save { background:#FF6B00; color:white; font-weight:700; padding:12px 28px; border-radius:12px; border:none; cursor:pointer; font-size:0.9rem; transition:background 0.2s, transform 0.15s, box-shadow 0.2s; box-shadow:0 4px 16px rgba(255,107,0,0.3); }
+    .btn-save:hover { background:#e55f00; transform:translateY(-1px); box-shadow:0 6px 20px rgba(255,107,0,0.4); }
+    .btn-save:active { transform:translateY(0); }
+    .skill-pill { display:inline-flex; align-items:center; gap:5px; padding:5px 12px; border-radius:100px; font-size:0.75rem; font-weight:600; background:#FFE5D0; color:#C2410C; }
+    .skill-pill button { opacity:0.6; transition:opacity 0.15s; line-height:1; }
+    .skill-pill button:hover { opacity:1; }
+    .progress-bar { height:6px; border-radius:100px; background:#F3F4F6; overflow:hidden; }
+    .progress-fill { height:100%; border-radius:100px; background:linear-gradient(90deg,#FF6B00,#FF8C42); transition:width 0.5s ease; }
+    .team-member-row { display:flex; align-items:center; gap:12px; padding:12px; border-radius:12px; background:#F9FAFB; }
+    .avatar { width:36px; height:36px; border-radius:50%; object-fit:cover; }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+  <!-- TOP NAV -->
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100 h-16 flex items-center px-6">
+    <div class="max-w-7xl mx-auto w-full flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background:#FF6B00;">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 2L14 5.5V10.5L8 14L2 10.5V5.5L8 2Z" fill="white"/></svg>
+        </div>
+        <span class="font-bold text-gray-900">CapstoneConnect</span>
+      </a>
+      <div class="flex items-center gap-4">
+        <span class="text-sm text-gray-500" id="nav-name">Student</span>
+        <button onclick="localStorage.clear(); window.location.href='login.html'" class="text-sm text-gray-400 hover:text-red-500 transition-colors">Log out</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="pt-16 flex min-h-screen">
+    <!-- SIDEBAR -->
+    <aside class="hidden md:flex flex-col w-56 fixed left-0 top-16 bottom-0 bg-white border-r border-gray-100 p-4">
+      <div class="space-y-1 mt-2">
+        <div class="sidebar-link active" data-nav="student-profile.html" onclick="window.location.href='student-profile.html'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          My Profile
+        </div>
+        <div class="sidebar-link" onclick="window.location.href='student-home.html'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Browse Projects
+        </div>
+      </div>
+      <div class="mt-auto pb-4">
+        <div class="sidebar-link text-red-400" onclick="localStorage.clear(); window.location.href='login.html'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Log Out
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="md:ml-56 flex-1 px-6 py-8 max-w-4xl">
+
+      <!-- Header -->
+      <div class="flex items-center justify-between mb-8">
+        <div>
+          <h1 class="text-2xl font-black text-gray-900 tracking-tight" style="letter-spacing:-0.03em;">My Profile</h1>
+          <p class="text-gray-500 text-sm mt-1">Complete your profile before applying to projects.</p>
+        </div>
+        <button class="btn-save" onclick="saveProfile()">Save Changes</button>
+      </div>
+
+      <!-- Profile Completion -->
+      <div class="section-card mb-6">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-sm font-semibold text-gray-700">Profile Completion</span>
+          <span class="text-sm font-bold" style="color:#FF6B00;" id="completion-pct">0%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+        </div>
+        <p class="text-xs text-gray-400 mt-2" id="completion-hint">Fill in all fields to unlock project applications.</p>
+      </div>
+
+      <!-- Avatar + Basic Info -->
+      <div class="section-card mb-6">
+        <h2 class="text-base font-bold text-gray-900 mb-5">Basic Information</h2>
+        <div class="flex items-start gap-6 mb-6">
+          <div class="relative">
+            <img id="avatar-preview" src="https://placehold.co/96x96/FF6B00/white?text=AJ" class="w-24 h-24 rounded-2xl object-cover" />
+            <button class="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-white border border-gray-200 shadow flex items-center justify-center hover:bg-gray-50 transition-colors" onclick="document.getElementById('avatar-input').click()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            </button>
+            <input type="file" id="avatar-input" accept="image/*" class="hidden" onchange="previewAvatar(event)" />
+          </div>
+          <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="input-label">Full Name *</label>
+              <input type="text" id="field-name" class="input-field" placeholder="Alex Johnson" />
+            </div>
+            <div>
+              <label class="input-label">Email</label>
+              <input type="text" id="field-email" class="input-field" placeholder="alex@usc.edu" disabled style="background:#F9FAFB; color:#9CA3AF;" />
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="input-label">University *</label>
+            <select id="field-university" class="input-field">
+              <option value="">Select university</option>
+              <option value="USC">University of Southern California (USC)</option>
+              <option value="UCLA">UCLA</option>
+              <option value="Stanford">Stanford University</option>
+              <option value="Caltech">Caltech</option>
+            </select>
+          </div>
+          <div>
+            <label class="input-label">Major *</label>
+            <input type="text" id="field-major" class="input-field" placeholder="e.g. Computer Science" />
+          </div>
+          <div>
+            <label class="input-label">Minor</label>
+            <input type="text" id="field-minor" class="input-field" placeholder="e.g. Mathematics (optional)" />
+          </div>
+          <div>
+            <label class="input-label">Expected Graduation *</label>
+            <select id="field-grad" class="input-field">
+              <option value="">Select year</option>
+              <option value="2025">Spring 2025</option>
+              <option value="2026">Spring 2026</option>
+              <option value="2027">Spring 2027</option>
+              <option value="2028">Spring 2028</option>
+            </select>
+          </div>
+          <div class="md:col-span-2">
+            <label class="input-label">Location *</label>
+            <input type="text" id="field-location" class="input-field" placeholder="e.g. Los Angeles, CA" />
+          </div>
+          <div class="md:col-span-2">
+            <label class="input-label">Bio</label>
+            <textarea id="field-bio" class="input-field" rows="3" placeholder="Tell companies a bit about yourself, your interests, and what you're looking for..." style="resize:vertical;"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Skills -->
+      <div class="section-card mb-6">
+        <h2 class="text-base font-bold text-gray-900 mb-1">Technical Skills *</h2>
+        <p class="text-xs text-gray-400 mb-4">Add skills that describe your expertise. These are used for AI matching.</p>
+        <div class="flex flex-wrap gap-2 mb-4" id="skills-container"></div>
+        <div class="flex gap-2">
+          <input type="text" id="skill-input" class="input-field" placeholder="e.g. Python, React, SQL..." style="max-width:280px;" onkeydown="if(event.key==='Enter'||event.key===','){event.preventDefault();addSkill();}" />
+          <button onclick="addSkill()" class="px-4 py-2 rounded-10 border border-gray-200 text-sm font-semibold text-gray-700 hover:border-orange-400 hover:text-orange-600 transition-colors" style="border-radius:10px; white-space:nowrap;">+ Add Skill</button>
+        </div>
+      </div>
+
+      <!-- Resume -->
+      <div class="section-card mb-6">
+        <h2 class="text-base font-bold text-gray-900 mb-1">Resume</h2>
+        <p class="text-xs text-gray-400 mb-4">Upload your resume (PDF). Visible to industry partners upon project acceptance.</p>
+        <div id="resume-display" class="hidden items-center gap-3 mb-3 p-3 bg-gray-50 rounded-xl border border-gray-200">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          <span class="text-sm text-gray-700 font-medium flex-1" id="resume-filename"></span>
+          <button onclick="removeResume()" class="text-xs text-red-500 hover:text-red-700 transition-colors">Remove</button>
+        </div>
+        <label class="flex items-center gap-3 p-4 border-2 border-dashed border-gray-200 rounded-xl cursor-pointer hover:border-orange-400 hover:bg-orange-50 transition-colors" id="resume-drop">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <div>
+            <div class="text-sm font-semibold text-gray-700">Upload PDF resume</div>
+            <div class="text-xs text-gray-400">Click to browse or drag and drop</div>
+          </div>
+          <input type="file" accept=".pdf,.doc,.docx" class="hidden" id="resume-input" onchange="handleResume(event)" />
+        </label>
+      </div>
+
+      <!-- Team -->
+      <div class="section-card mb-8">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-base font-bold text-gray-900">Team</h2>
+            <p class="text-xs text-gray-400 mt-0.5">Students apply to projects as a team.</p>
+          </div>
+          <button id="team-action-btn" onclick="showTeamModal()" class="px-4 py-2 rounded-10 text-sm font-semibold text-white transition-colors" style="background:#FF6B00; border-radius:10px;">+ Create Team</button>
+        </div>
+        <div id="team-section">
+          <!-- Filled by JS -->
+        </div>
+      </div>
+
+      <div class="flex justify-end">
+        <button class="btn-save" onclick="saveProfile()">Save & Continue to Projects →</button>
+      </div>
+    </main>
+  </div>
+
+  <!-- Team Modal -->
+  <div id="team-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4">
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="closeTeamModal()"></div>
+    <div class="relative bg-white rounded-2xl p-8 w-full max-w-md shadow-2xl">
+      <h2 class="text-lg font-black text-gray-900 mb-5" style="letter-spacing:-0.02em;" id="modal-title">Create a Team</h2>
+      <div id="modal-create-form">
+        <div class="mb-4">
+          <label class="input-label">Team Name *</label>
+          <input type="text" id="team-name-input" class="input-field" placeholder="e.g. Signal & Spark" />
+        </div>
+        <div class="mb-6">
+          <label class="input-label">Invite Teammate (email)</label>
+          <input type="email" id="invite-email-input" class="input-field" placeholder="teammate@usc.edu" />
+          <p class="text-xs text-gray-400 mt-1">A simulated invite will be sent.</p>
+        </div>
+        <div class="flex gap-3">
+          <button onclick="closeTeamModal()" class="flex-1 py-3 rounded-xl border border-gray-200 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors">Cancel</button>
+          <button onclick="createTeam()" class="flex-1 py-3 rounded-xl text-sm font-semibold text-white" style="background:#FF6B00;">Create Team</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast container -->
+  <div id="toast-container"></div>
+
+  <script>
+    requireRole('student');
+
+    let profile = getStudentProfile();
+    let skills = [...(profile.skills || [])];
+    let resumeFile = profile.resume || null;
+
+    // Load profile into fields
+    function loadProfile() {
+      document.getElementById('nav-name').textContent = profile.name || 'Student';
+      document.getElementById('field-name').value = profile.name || '';
+      document.getElementById('field-email').value = profile.email || '';
+      document.getElementById('field-university').value = profile.university || '';
+      document.getElementById('field-major').value = profile.major || '';
+      document.getElementById('field-minor').value = profile.minor || '';
+      document.getElementById('field-grad').value = profile.graduationYear || '';
+      document.getElementById('field-location').value = profile.location || '';
+      document.getElementById('field-bio').value = profile.bio || '';
+      if (profile.profilePicture) document.getElementById('avatar-preview').src = profile.profilePicture;
+      renderSkills();
+      renderResume();
+      renderTeam();
+      updateCompletion();
+    }
+
+    function renderSkills() {
+      const container = document.getElementById('skills-container');
+      container.innerHTML = skills.map((s,i) => `
+        <span class="skill-pill">
+          ${s}
+          <button onclick="removeSkill(${i})" type="button">×</button>
+        </span>
+      `).join('');
+    }
+
+    function addSkill() {
+      const input = document.getElementById('skill-input');
+      const val = input.value.replace(/,/g,'').trim();
+      if (val && !skills.includes(val)) {
+        skills.push(val);
+        renderSkills();
+        updateCompletion();
+      }
+      input.value = '';
+    }
+
+    function removeSkill(idx) {
+      skills.splice(idx, 1);
+      renderSkills();
+      updateCompletion();
+    }
+
+    function renderResume() {
+      const display = document.getElementById('resume-display');
+      const drop = document.getElementById('resume-drop');
+      if (resumeFile) {
+        display.classList.remove('hidden');
+        display.classList.add('flex');
+        document.getElementById('resume-filename').textContent = resumeFile;
+        drop.style.display = 'none';
+      } else {
+        display.classList.add('hidden');
+        display.classList.remove('flex');
+        drop.style.display = '';
+      }
+    }
+
+    function handleResume(e) {
+      const f = e.target.files[0];
+      if (f) { resumeFile = f.name; renderResume(); updateCompletion(); }
+    }
+
+    function removeResume() {
+      resumeFile = null;
+      document.getElementById('resume-input').value = '';
+      renderResume();
+      updateCompletion();
+    }
+
+    function previewAvatar(e) {
+      const f = e.target.files[0];
+      if (f) {
+        const reader = new FileReader();
+        reader.onload = (ev) => { document.getElementById('avatar-preview').src = ev.target.result; };
+        reader.readAsDataURL(f);
+      }
+    }
+
+    function renderTeam() {
+      const section = document.getElementById('team-section');
+      const btn = document.getElementById('team-action-btn');
+      const teamId = profile.teamId;
+      const team = teamId ? mockTeams.find(t => t.id === teamId) : null;
+
+      if (!team) {
+        section.innerHTML = `<div class="text-center py-8 text-gray-400">
+          <svg class="mx-auto mb-3" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          <p class="text-sm">You're not on a team yet.</p>
+          <p class="text-xs mt-1">Create or join a team to apply to projects.</p>
+        </div>`;
+        btn.textContent = '+ Create Team';
+      } else {
+        const teamMembers = mockStudents.filter(s => team.members.includes(s.id));
+        section.innerHTML = `
+          <div class="p-4 bg-orange-50 rounded-xl border border-orange-100 mb-3">
+            <div class="flex items-center justify-between mb-3">
+              <div>
+                <div class="font-bold text-gray-900">${team.name}</div>
+                <div class="text-xs text-gray-500">${teamMembers.length + 1} member${teamMembers.length > 0 ? 's' : ''}</div>
+              </div>
+              <span class="px-3 py-1 rounded-full text-xs font-semibold bg-orange-100 text-orange-700">Active</span>
+            </div>
+            <div class="space-y-2">
+              <div class="team-member-row">
+                <img src="${profile.profilePicture || 'https://placehold.co/36x36/FF6B00/white?text=Me'}" class="avatar" />
+                <div class="flex-1">
+                  <div class="text-sm font-semibold text-gray-900">${profile.name} <span class="text-xs text-orange-600">(You)</span></div>
+                  <div class="text-xs text-gray-400">${profile.major} · ${profile.university}</div>
+                </div>
+              </div>
+              ${teamMembers.map(m => `
+                <div class="team-member-row">
+                  <img src="${m.profilePicture}" class="avatar" />
+                  <div class="flex-1">
+                    <div class="text-sm font-semibold text-gray-900">${m.name}</div>
+                    <div class="text-xs text-gray-400">${m.major} · ${m.university}</div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+          <button onclick="showInviteModal()" class="text-sm text-orange-600 font-semibold hover:text-orange-700 transition-colors">+ Invite a teammate</button>
+        `;
+        btn.textContent = '+ Invite Member';
+        btn.onclick = showInviteModal;
+      }
+    }
+
+    function updateCompletion() {
+      const fields = ['field-name', 'field-university', 'field-major', 'field-grad', 'field-location'];
+      const filled = fields.filter(f => document.getElementById(f)?.value?.trim()).length;
+      const hasSkills = skills.length > 0 ? 1 : 0;
+      const hasResume = resumeFile ? 1 : 0;
+      const total = fields.length + 2;
+      const done = filled + hasSkills + hasResume;
+      const pct = Math.round((done / total) * 100);
+      document.getElementById('completion-pct').textContent = pct + '%';
+      document.getElementById('progress-fill').style.width = pct + '%';
+      const hint = pct >= 100
+        ? '✓ Profile complete! You can now apply to projects.'
+        : `${total - done} field${total - done !== 1 ? 's' : ''} remaining to complete your profile.`;
+      document.getElementById('completion-hint').textContent = hint;
+    }
+
+    // Listen for input changes
+    ['field-name','field-university','field-major','field-grad','field-location','field-bio'].forEach(id => {
+      document.getElementById(id)?.addEventListener('input', updateCompletion);
+    });
+
+    function saveProfile() {
+      const updated = {
+        ...profile,
+        name: document.getElementById('field-name').value.trim(),
+        email: profile.email,
+        university: document.getElementById('field-university').value,
+        major: document.getElementById('field-major').value.trim(),
+        minor: document.getElementById('field-minor').value.trim() || null,
+        graduationYear: document.getElementById('field-grad').value,
+        location: document.getElementById('field-location').value.trim(),
+        bio: document.getElementById('field-bio').value.trim(),
+        skills,
+        resume: resumeFile,
+        profilePicture: document.getElementById('avatar-preview').src,
+        profileComplete: isProfileComplete()
+      };
+      saveStudentProfile(updated);
+      profile = updated;
+      showToast('Profile saved!');
+      if (updated.profileComplete) {
+        setTimeout(() => window.location.href = 'student-home.html', 1200);
+      }
+    }
+
+    function isProfileComplete() {
+      const name = document.getElementById('field-name').value.trim();
+      const uni = document.getElementById('field-university').value;
+      const major = document.getElementById('field-major').value.trim();
+      const grad = document.getElementById('field-grad').value;
+      const loc = document.getElementById('field-location').value.trim();
+      return !!(name && uni && major && grad && loc && skills.length > 0);
+    }
+
+    // Team modal
+    function showTeamModal() { document.getElementById('team-modal').classList.remove('hidden'); }
+    function showInviteModal() {
+      document.getElementById('modal-title').textContent = 'Invite a Teammate';
+      document.getElementById('team-modal').classList.remove('hidden');
+    }
+    function closeTeamModal() { document.getElementById('team-modal').classList.add('hidden'); }
+
+    function createTeam() {
+      const name = document.getElementById('team-name-input').value.trim();
+      if (!name) { showToast('Please enter a team name.', 'error'); return; }
+      const newTeam = { id: 'team_new_' + Date.now(), name, members: [], invitePending: [] };
+      mockTeams.push(newTeam);
+      profile.teamId = newTeam.id;
+      saveStudentProfile(profile);
+      const inviteEmail = document.getElementById('invite-email-input').value.trim();
+      closeTeamModal();
+      renderTeam();
+      if (inviteEmail) {
+        showToast(`Invite sent to ${inviteEmail}!`);
+      } else {
+        showToast(`Team "${name}" created!`);
+      }
+    }
+
+    loadProfile();
+  </script>
+</body>
+</html>

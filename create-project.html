@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Project — CapstoneConnect</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="mockStudents.js"></script>
+  <script src="mockCompanies.js"></script>
+  <script src="mockProjects.js"></script>
+  <script src="mockApplications.js"></script>
+  <script src="main.js"></script>
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    .input-field { width:100%; padding:11px 14px; border:1.5px solid #E5E7EB; border-radius:12px; font-size:0.875rem; color:#111827; outline:none; transition:border-color 0.2s, box-shadow 0.2s; background:white; font-family:inherit; }
+    .input-field:focus { border-color:#FF6B00; box-shadow:0 0 0 3px rgba(255,107,0,0.12); }
+    .input-label { font-size:0.8rem; font-weight:700; color:#374151; margin-bottom:6px; display:block; }
+    .input-hint { font-size:0.72rem; color:#9CA3AF; margin-top:4px; }
+    .section-card { background:white; border-radius:20px; padding:28px; border:1px solid #F3F4F6; box-shadow:0 2px 12px rgba(0,0,0,0.05); margin-bottom:20px; }
+    .section-title { font-size:1rem; font-weight:800; color:#111827; margin-bottom:20px; letter-spacing:-0.01em; }
+    .skill-pill { display:inline-flex; align-items:center; gap:5px; padding:5px 12px; border-radius:100px; font-size:0.75rem; font-weight:600; background:#FFE5D0; color:#C2410C; }
+    .skill-pill button { opacity:0.6; transition:opacity 0.15s; }
+    .skill-pill button:hover { opacity:1; }
+    .btn-draft { padding:12px 24px; border-radius:12px; font-size:0.9rem; font-weight:700; border:2px solid #E5E7EB; color:#374151; cursor:pointer; transition:all 0.2s; background:white; }
+    .btn-draft:hover { border-color:#FF6B00; color:#FF6B00; background:#FFF5EE; }
+    .btn-publish { padding:12px 24px; border-radius:12px; font-size:0.9rem; font-weight:700; color:white; background:#FF6B00; border:none; cursor:pointer; transition:all 0.2s; box-shadow:0 4px 16px rgba(255,107,0,0.35); }
+    .btn-publish:hover { background:#e55f00; transform:translateY(-1px); box-shadow:0 6px 20px rgba(255,107,0,0.45); }
+    .char-count { font-size:0.72rem; color:#9CA3AF; text-align:right; margin-top:2px; }
+    .step-indicator { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:800; flex-shrink:0; }
+    .step-active { background:#FF6B00; color:white; }
+    .step-done { background:#ECFDF5; color:#059669; }
+    .step-pending { background:#F3F4F6; color:#9CA3AF; }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+  <!-- TOP NAV -->
+  <nav class="fixed top-0 left-0 right-0 z-40 bg-white border-b border-gray-100 h-16 flex items-center px-6">
+    <div class="max-w-7xl mx-auto w-full flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background:#FF6B00;">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 2L14 5.5V10.5L8 14L2 10.5V5.5L8 2Z" fill="white"/></svg>
+        </div>
+        <span class="font-bold text-gray-900">CapstoneConnect</span>
+      </a>
+      <div class="flex items-center gap-3">
+        <a href="industry-dashboard.html" class="text-sm text-gray-500 hover:text-gray-900 transition-colors flex items-center gap-1">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Dashboard
+        </a>
+        <button onclick="localStorage.clear(); window.location.href='login.html'" class="text-sm text-gray-400 hover:text-red-500 transition-colors">Log out</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="pt-16 max-w-3xl mx-auto px-6 py-10">
+
+    <!-- Header -->
+    <div class="mb-8">
+      <a href="industry-dashboard.html" class="text-sm text-gray-400 hover:text-gray-600 flex items-center gap-1 mb-4 w-fit transition-colors">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back to Dashboard
+      </a>
+      <h1 class="text-2xl font-black text-gray-900 tracking-tight" style="letter-spacing:-0.03em;">Create a New Project</h1>
+      <p class="text-gray-500 text-sm mt-1">Fill in your project details. You can save as draft or publish immediately.</p>
+    </div>
+
+    <!-- Section 1: Project Identity -->
+    <div class="section-card">
+      <div class="section-title">Project Overview</div>
+      <div class="space-y-5">
+        <div>
+          <label class="input-label">Project Title *</label>
+          <input type="text" id="field-title" class="input-field" placeholder="e.g. AI-Powered Customer Churn Prediction" oninput="updateCharCount('field-title','title-count',80)" />
+          <div class="flex justify-between items-center">
+            <p class="input-hint">Be specific — students scan titles first.</p>
+            <span class="char-count"><span id="title-count">0</span>/80</span>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="input-label">Topic / Domain *</label>
+            <select id="field-topic" class="input-field">
+              <option value="">Select a topic</option>
+              <option>Artificial Intelligence</option>
+              <option>Machine Learning</option>
+              <option>Healthcare AI</option>
+              <option>UX/Product</option>
+              <option>Sustainability</option>
+              <option>Data Engineering</option>
+              <option>Cybersecurity</option>
+              <option>FinTech</option>
+              <option>Robotics</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div>
+            <label class="input-label">Location / Format *</label>
+            <select id="field-location" class="input-field">
+              <option value="">Select format</option>
+              <option>Remote</option>
+              <option>El Segundo, CA (Hybrid)</option>
+              <option>San Diego, CA (On-site)</option>
+              <option>San Francisco, CA (Hybrid)</option>
+              <option>Los Angeles, CA (On-site)</option>
+              <option>New York, NY (Hybrid)</option>
+            </select>
+          </div>
+          <div>
+            <label class="input-label">Project Timeline *</label>
+            <select id="field-timeline" class="input-field">
+              <option value="">Select timeline</option>
+              <option>Jan 2025 – May 2025</option>
+              <option>Feb 2025 – Jun 2025</option>
+              <option>Mar 2025 – Jun 2025</option>
+              <option>Sep 2025 – Dec 2025</option>
+              <option>Jan 2026 – May 2026</option>
+            </select>
+          </div>
+          <div>
+            <label class="input-label">Max Teams to Accept</label>
+            <select id="field-max-teams" class="input-field">
+              <option value="1">1 team</option>
+              <option value="2">2 teams</option>
+              <option value="3">3 teams</option>
+              <option value="unlimited">Open to all accepted teams</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 2: Problem + Scope -->
+    <div class="section-card">
+      <div class="section-title">Problem & Scope</div>
+      <div class="space-y-5">
+        <div>
+          <label class="input-label">Problem Statement *</label>
+          <textarea id="field-problem" class="input-field" rows="4" placeholder="Describe the real-world challenge your company is facing. What is the current pain point, and what would success look like?" oninput="updateCharCount('field-problem','problem-count',500)"></textarea>
+          <div class="flex justify-between items-center">
+            <p class="input-hint">Compelling problem statements attract more qualified applicants.</p>
+            <span class="char-count"><span id="problem-count">0</span>/500</span>
+          </div>
+        </div>
+        <div>
+          <label class="input-label">Project Scope & Deliverables *</label>
+          <textarea id="field-scope" class="input-field" rows="4" placeholder="What should the student team build or deliver? List specific outputs: a model, dashboard, report, prototype, etc." oninput="updateCharCount('field-scope','scope-count',500)"></textarea>
+          <div class="flex justify-between items-center">
+            <p class="input-hint">Clear scope helps students self-select.</p>
+            <span class="char-count"><span id="scope-count">0</span>/500</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3: Required Skills -->
+    <div class="section-card">
+      <div class="section-title">Required Skills</div>
+      <p class="text-xs text-gray-400 mb-4">These skills are used by the AI matching system to score student teams. Add as many as relevant.</p>
+      <div class="flex flex-wrap gap-2 mb-4" id="skills-container"></div>
+      <div class="flex gap-2">
+        <input type="text" id="skill-input" class="input-field" placeholder="e.g. Python, React, SQL..." style="max-width:280px;" onkeydown="if(event.key==='Enter'||event.key===','){event.preventDefault();addSkill();}" />
+        <button onclick="addSkill()" class="px-4 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-700 hover:border-orange-400 hover:text-orange-600 transition-colors">+ Add Skill</button>
+      </div>
+    </div>
+
+    <!-- Preview -->
+    <div class="section-card" style="border-color:rgba(255,107,0,0.2); background:#FFF9F5;">
+      <div class="section-title" style="color:#FF6B00;">Preview Card</div>
+      <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+        <div class="flex items-center gap-2 mb-3">
+          <img src="https://placehold.co/36x36/1a1a2e/white?text=AV" class="w-9 h-9 rounded-xl" />
+          <div>
+            <div class="text-xs font-semibold text-gray-900">AeroVance Systems</div>
+            <div class="text-xs text-gray-400" id="preview-location">Location</div>
+          </div>
+          <div class="ml-auto">
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-600">
+              <span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>Draft
+            </span>
+          </div>
+        </div>
+        <h3 class="font-bold text-gray-900 text-sm mb-2" id="preview-title">Your project title will appear here</h3>
+        <div class="flex flex-wrap gap-1.5" id="preview-skills">
+          <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-400">Skills appear here</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex flex-col sm:flex-row gap-3 justify-end pb-12">
+      <button class="btn-draft" onclick="saveProject(true)">
+        Save as Draft
+      </button>
+      <button class="btn-publish" onclick="saveProject(false)">
+        Publish Project →
+      </button>
+    </div>
+
+  </div>
+
+  <script>
+    requireRole('industry');
+
+    let skills = [];
+
+    function updateCharCount(fieldId, countId, max) {
+      const val = document.getElementById(fieldId).value.length;
+      document.getElementById(countId).textContent = val;
+      updatePreview();
+    }
+
+    function addSkill() {
+      const input = document.getElementById('skill-input');
+      const val = input.value.replace(/,/g,'').trim();
+      if (val && !skills.includes(val)) {
+        skills.push(val);
+        renderSkills();
+        updatePreview();
+      }
+      input.value = '';
+    }
+
+    function removeSkill(idx) {
+      skills.splice(idx, 1);
+      renderSkills();
+      updatePreview();
+    }
+
+    function renderSkills() {
+      document.getElementById('skills-container').innerHTML = skills.map((s,i) => `
+        <span class="skill-pill">${s}<button onclick="removeSkill(${i})" type="button">×</button></span>
+      `).join('');
+    }
+
+    function updatePreview() {
+      const title = document.getElementById('field-title').value || 'Your project title will appear here';
+      const loc = document.getElementById('field-location').value || 'Location';
+      document.getElementById('preview-title').textContent = title;
+      document.getElementById('preview-location').textContent = loc;
+      const sc = document.getElementById('preview-skills');
+      if (skills.length > 0) {
+        sc.innerHTML = skills.slice(0,4).map(s => `<span class="px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">${s}</span>`).join('');
+      } else {
+        sc.innerHTML = '<span class="px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-400">Skills appear here</span>';
+      }
+    }
+
+    // Live preview listeners
+    ['field-title','field-location','field-topic','field-timeline'].forEach(id => {
+      document.getElementById(id)?.addEventListener('input', updatePreview);
+      document.getElementById(id)?.addEventListener('change', updatePreview);
+    });
+
+    function validate() {
+      const required = ['field-title','field-topic','field-location','field-timeline','field-problem','field-scope'];
+      for (const id of required) {
+        const val = document.getElementById(id).value.trim();
+        if (!val) {
+          const label = document.querySelector(`[for="${id}"]`)?.textContent || id;
+          showToast(`"${document.querySelector('label[class="input-label"]')?.textContent || 'Required field'}" is missing.`, 'error');
+          document.getElementById(id).focus();
+          return false;
+        }
+      }
+      if (skills.length === 0) {
+        showToast('Please add at least one required skill.', 'error');
+        return false;
+      }
+      return true;
+    }
+
+    function saveProject(isDraft) {
+      const title = document.getElementById('field-title').value.trim();
+      const topic = document.getElementById('field-topic').value;
+      const location = document.getElementById('field-location').value;
+      const timeline = document.getElementById('field-timeline').value;
+      const problem = document.getElementById('field-problem').value.trim();
+      const scope = document.getElementById('field-scope').value.trim();
+
+      if (!isDraft && !validate()) return;
+      if (isDraft && !title) { showToast('Please add a title before saving draft.', 'error'); return; }
+
+      const projects = getProjects();
+      const newProject = {
+        id: 'p_' + Date.now(),
+        companyId: 'c1',
+        companyName: 'AeroVance Systems',
+        companyLogo: 'https://placehold.co/40x40/1a1a2e/white?text=AV',
+        title,
+        topic,
+        scope,
+        timeline,
+        location,
+        problemStatement: problem,
+        requiredSkills: [...skills],
+        status: isDraft ? 'draft' : 'open',
+        applicantCount: 0,
+        acceptedTeams: [],
+        isDraft,
+        createdAt: new Date().toISOString().split('T')[0]
+      };
+
+      projects.push(newProject);
+      saveProjects(projects);
+
+      showToast(isDraft ? 'Draft saved!' : 'Project published! 🎉');
+      setTimeout(() => window.location.href = 'industry-dashboard.html', 1000);
+    }
+  </script>
+</body>
+</html>

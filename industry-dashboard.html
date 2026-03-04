@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Industry Dashboard — CapstoneConnect</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="mockStudents.js"></script>
+  <script src="mockCompanies.js"></script>
+  <script src="mockProjects.js"></script>
+  <script src="mockApplications.js"></script>
+  <script src="main.js"></script>
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    .sidebar-link { display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px; color:#6B7280; font-size:0.875rem; font-weight:500; transition:background 0.15s, color 0.15s; cursor:pointer; }
+    .sidebar-link:hover, .sidebar-link.active { background:#FFF5EE; color:#FF6B00; }
+    .sidebar-link.active { font-weight:600; }
+
+    .stat-card { background:white; border-radius:16px; padding:20px 24px; border:1px solid #F3F4F6; box-shadow:0 2px 12px rgba(0,0,0,0.05); }
+    .project-row { background:white; border-radius:16px; padding:20px 24px; border:1px solid #F3F4F6; box-shadow:0 1px 8px rgba(0,0,0,0.04); transition:box-shadow 0.2s, border-color 0.2s, transform 0.2s; cursor:pointer; }
+    .project-row:hover { box-shadow:0 8px 32px rgba(255,107,0,0.1), 0 2px 8px rgba(0,0,0,0.06); border-color:rgba(255,107,0,0.25); transform:translateY(-1px); }
+
+    .status-btn { padding:5px 12px; border-radius:100px; font-size:0.75rem; font-weight:600; border:1.5px solid transparent; cursor:pointer; transition:all 0.15s; }
+    .btn-publish { background:#ECFDF5; color:#059669; border-color:#A7F3D0; }
+    .btn-publish:hover { background:#D1FAE5; }
+    .btn-complete { background:#EFF6FF; color:#1D4ED8; border-color:#BFDBFE; }
+    .btn-complete:hover { background:#DBEAFE; }
+    .btn-view { background:#FFF5EE; color:#FF6B00; border-color:#FFD5B0; }
+    .btn-view:hover { background:#FFE5D0; }
+
+    .tab-btn { padding:8px 20px; border-radius:100px; font-size:0.85rem; font-weight:600; cursor:pointer; transition:all 0.15s; color:#6B7280; border:1.5px solid transparent; }
+    .tab-btn.active { background:white; color:#FF6B00; border-color:#FFD5B0; box-shadow:0 2px 8px rgba(255,107,0,0.12); }
+    .tab-btn:hover:not(.active) { color:#374151; }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+  <!-- TOP NAV -->
+  <nav class="fixed top-0 left-0 right-0 z-40 bg-white border-b border-gray-100 h-16 flex items-center px-6">
+    <div class="max-w-7xl mx-auto w-full flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background:#FF6B00;">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 2L14 5.5V10.5L8 14L2 10.5V5.5L8 2Z" fill="white"/></svg>
+        </div>
+        <span class="font-bold text-gray-900">CapstoneConnect</span>
+      </a>
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2">
+          <img src="https://placehold.co/28x28/1a1a2e/white?text=AV" class="w-7 h-7 rounded-lg" />
+          <span class="text-sm font-semibold text-gray-700">AeroVance Systems</span>
+        </div>
+        <button onclick="localStorage.clear(); window.location.href='login.html'" class="text-sm text-gray-400 hover:text-red-500 transition-colors">Log out</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="pt-16 flex min-h-screen">
+    <!-- SIDEBAR -->
+    <aside class="hidden md:flex flex-col w-56 fixed left-0 top-16 bottom-0 bg-white border-r border-gray-100 p-4">
+      <div class="space-y-1 mt-2">
+        <div class="sidebar-link active">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          Dashboard
+        </div>
+        <div class="sidebar-link" onclick="window.location.href='create-project.html'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          Create Project
+        </div>
+      </div>
+      <div class="mt-auto pb-4">
+        <div class="sidebar-link text-red-400" onclick="localStorage.clear(); window.location.href='login.html'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Log Out
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="md:ml-56 flex-1 px-6 py-8 max-w-5xl">
+
+      <!-- Header -->
+      <div class="flex items-center justify-between mb-8">
+        <div>
+          <h1 class="text-2xl font-black text-gray-900 tracking-tight" style="letter-spacing:-0.03em;">Company Dashboard</h1>
+          <p class="text-gray-500 text-sm mt-1">Manage your capstone projects and review applicants.</p>
+        </div>
+        <a href="create-project.html" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-white text-sm transition-all" style="background:#FF6B00; box-shadow:0 4px 16px rgba(255,107,0,0.3);" onmouseover="this.style.background='#e55f00'" onmouseout="this.style.background='#FF6B00'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Create Project
+        </a>
+      </div>
+
+      <!-- Stats -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div class="stat-card">
+          <div class="text-2xl font-black text-gray-900" id="stat-total" style="letter-spacing:-0.03em;">—</div>
+          <div class="text-xs text-gray-500 mt-1 font-medium">Total Projects</div>
+        </div>
+        <div class="stat-card">
+          <div class="text-2xl font-black" style="color:#FF6B00; letter-spacing:-0.03em;" id="stat-open">—</div>
+          <div class="text-xs text-gray-500 mt-1 font-medium">Open</div>
+        </div>
+        <div class="stat-card">
+          <div class="text-2xl font-black text-amber-600" id="stat-inprogress" style="letter-spacing:-0.03em;">—</div>
+          <div class="text-xs text-gray-500 mt-1 font-medium">In Progress</div>
+        </div>
+        <div class="stat-card">
+          <div class="text-2xl font-black text-gray-900" id="stat-applicants" style="letter-spacing:-0.03em;">—</div>
+          <div class="text-xs text-gray-500 mt-1 font-medium">Total Applicants</div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="flex gap-2 mb-6 p-1 bg-gray-100 rounded-xl w-fit">
+        <button class="tab-btn active" onclick="setTab('all', this)">All</button>
+        <button class="tab-btn" onclick="setTab('open', this)">Open</button>
+        <button class="tab-btn" onclick="setTab('draft', this)">Drafts</button>
+        <button class="tab-btn" onclick="setTab('in-progress', this)">In Progress</button>
+        <button class="tab-btn" onclick="setTab('completed', this)">Completed</button>
+      </div>
+
+      <!-- Project List -->
+      <div class="space-y-3" id="project-list">
+        <!-- Filled by JS -->
+      </div>
+
+      <div id="empty-state" class="hidden text-center py-16 text-gray-400">
+        <svg class="mx-auto mb-4" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <p class="font-semibold text-gray-600">No projects here yet.</p>
+        <a href="create-project.html" class="inline-block mt-3 px-4 py-2 rounded-xl text-sm font-semibold text-white" style="background:#FF6B00;">+ Create your first project</a>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    requireRole('industry');
+
+    let projects = getProjects();
+    let applications = getApplications();
+    let activeTab = 'all';
+
+    // Only show company c1 projects (AeroVance)
+    const companyId = 'c1';
+
+    function getCompanyProjects() {
+      const stored = localStorage.getItem('companyProjects');
+      const extra = stored ? JSON.parse(stored) : [];
+      return [...projects.filter(p => p.companyId === companyId), ...extra];
+    }
+
+    function renderStats() {
+      const cp = getCompanyProjects();
+      document.getElementById('stat-total').textContent = cp.filter(p => !p.isDraft).length;
+      document.getElementById('stat-open').textContent = cp.filter(p => p.status === 'open').length;
+      document.getElementById('stat-inprogress').textContent = cp.filter(p => p.status === 'in-progress').length;
+      const total = cp.reduce((acc, p) => acc + (p.applicantCount || 0), 0);
+      document.getElementById('stat-applicants').textContent = total;
+    }
+
+    function setTab(val, el) {
+      activeTab = val;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      el?.classList.add('active');
+      renderProjects();
+    }
+
+    function renderProjects() {
+      const list = document.getElementById('project-list');
+      let cp = getCompanyProjects();
+      if (activeTab !== 'all') cp = cp.filter(p => {
+        if (activeTab === 'draft') return p.isDraft;
+        return p.status === activeTab && !p.isDraft;
+      });
+
+      if (cp.length === 0) {
+        list.innerHTML = '';
+        document.getElementById('empty-state').classList.remove('hidden');
+        return;
+      }
+      document.getElementById('empty-state').classList.add('hidden');
+
+      list.innerHTML = cp.map(p => {
+        const appCount = applications.filter(a => a.projectId === p.id).length || p.applicantCount || 0;
+        const statusColors = { 'open':'bg-emerald-50 text-emerald-700','in-progress':'bg-amber-50 text-amber-700','completed':'bg-blue-50 text-blue-700','draft':'bg-gray-100 text-gray-600' };
+        const statusDots = { 'open':'bg-emerald-400','in-progress':'bg-amber-400','completed':'bg-blue-400','draft':'bg-gray-400' };
+        const statusLabel = { 'open':'Open','in-progress':'In Progress','completed':'Completed','draft':'Draft' };
+
+        return `
+          <div class="project-row" onclick="window.location.href='project-applicants.html?project=${p.id}'">
+            <div class="flex items-start justify-between gap-4">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${statusColors[p.isDraft ? 'draft' : p.status]}">
+                    <span class="w-1.5 h-1.5 rounded-full ${statusDots[p.isDraft ? 'draft' : p.status]}"></span>
+                    ${p.isDraft ? 'Draft' : statusLabel[p.status]}
+                  </span>
+                  <span class="text-xs text-gray-400">${p.topic}</span>
+                </div>
+                <h3 class="font-bold text-gray-900 text-base truncate">${p.title}</h3>
+                <div class="flex items-center gap-4 mt-2 text-xs text-gray-400">
+                  <span class="flex items-center gap-1">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+                    ${appCount} applicant${appCount !== 1 ? 's' : ''}
+                  </span>
+                  <span class="flex items-center gap-1">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    ${p.timeline}
+                  </span>
+                  <span class="flex items-center gap-1">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    ${p.location}
+                  </span>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 flex-shrink-0" onclick="event.stopPropagation()">
+                ${p.isDraft
+                  ? `<button class="status-btn btn-publish" onclick="publishProject('${p.id}')">Publish</button>`
+                  : p.status === 'open'
+                    ? `<button class="status-btn btn-complete" onclick="markComplete('${p.id}')">Mark Complete</button>`
+                    : ''
+                }
+                <button class="status-btn btn-view" onclick="window.location.href='project-applicants.html?project=${p.id}'">View Applicants</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function publishProject(id) {
+      const p = projects.find(x => x.id === id);
+      if (p) { p.isDraft = false; p.status = 'open'; saveProjects(projects); projects = getProjects(); renderStats(); renderProjects(); showToast('Project published!'); }
+    }
+
+    function markComplete(id) {
+      if (!confirm('Mark this project as Completed?')) return;
+      const p = projects.find(x => x.id === id);
+      if (p) { p.status = 'completed'; saveProjects(projects); projects = getProjects(); renderStats(); renderProjects(); showToast('Project marked as completed.'); }
+    }
+
+    renderStats();
+    renderProjects();
+  </script>
+</body>
+</html>
